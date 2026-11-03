@@ -1,0 +1,183 @@
+﻿@model RKTechnologyTask.Models.EmployeeModel
+
+
+
+   <body class="bg-white">
+        <div id="layoutAuthentication">
+            <div id="layoutAuthentication_content">
+                <main>
+                    <div class="container">
+                        <div class="row justify-content-center">
+                            <div class="col-lg-0">
+                                <div class="card shadow-lg border-0 rounded-lg mt-0">
+                                <div class="card-header bg-black text-white"><h3 class="text-center font-weight-light my-0">Employee</h3></div>
+                                    <div class="card-body">
+                                    <form asp-action="SaveOrUpdate" asp-controller="Employee" method="post">
+                                        <div class="row">
+                                            <input asp-for="EmployeeId" type="hidden" />
+                                            <div class="col-md-3">
+                                                <label>Employee Name</label>
+                                                <input asp-for="EmployeeName" class="form-control" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>Email</label>
+                                                <input asp-for="Email" class="form-control" type="email" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>Mobile Number</label>
+                                                <input asp-for="MobileNumber" class="form-control" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>DOB</label>
+                                                <input asp-for="DOB" class="form-control" type="date" />
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>Country</label>
+                                                <select asp-for="CountryId" id="CountryId" class="form-control" onchange="loadState()">
+                                                    <option value="">Select Country</option>
+
+                                                    @foreach (var item in ViewBag.CountryDDL)
+                                                    {
+                                                        <option value="@item.Value">@item.Text</option>
+                                                    }
+                                                </select>
+                                            </div>
+                                            <div class="col-md-3">
+                                                <label>State</label>
+                                                <select asp-for="StateId" id="StateId" class="form-control" onchange="loadCity()">
+                                                    <option value="">Select State</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="col-md-3">
+                                                <label>City</label>
+                                                <select asp-for="CityId" id="CityId" class="form-control">
+                                                    <option value="">Select City</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <br />
+                                        <div class="row">
+
+                                            <div class="col-md-3">
+                                                <h4>Hobbies</h4>
+
+                                                @foreach (var item in Model.HobbiesList)
+                                                {
+                                                    <label>
+                                                        <input type="checkbox"
+                                                               name="HobbiesList"
+                                                               value="@item" />
+                                                        @item
+                                                    </label>
+                                                    <br />
+                                                }
+                                            </div>
+                                            <div class="col-md-3">
+
+
+                                                <label>Gender</label>
+
+                                                <div>
+                                                    <input asp-for="Gender" type="radio" value="Male" /> Male
+                                                </div>
+
+                                                <div>
+                                                    <input asp-for="Gender" type="radio" value="Female" /> Female
+                                                </div>
+
+                                                <div>
+                                                    <input asp-for="Gender" type="radio" value="Other" /> Other
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <button type="submit" class="btn btn-primary mt-4">Create</button>
+                                        <button type="reset" class="btn btn-dark mt-4">Cancel</button>
+                                    </form>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
+     
+        </div>
+    
+    </body>
+
+
+
+
+
+
+
+
+
+
+
+<h2></h2>
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+       function loadState() {
+
+        var countryId = $("#CountryId").val();
+
+        if (countryId != "") {
+
+            $.ajax({
+                url: '/Employee/GetStateByCountry',
+                type: 'GET',
+                data: { countryId: countryId },
+
+                success: function (data) {
+
+                    $("#StateId").html('<option value="">Select State</option>');
+
+                    $.each(data, function (i, item) {
+                    
+                        $("#StateId").append(
+                       '<option value="' + item.value + '">' + item.text + '</option>'
+                        );
+                    });
+                }
+            });
+        }
+        else {
+            $("#StateId").html('<option value="">Select State</option>');
+        }
+    }
+
+    function loadCity() {
+
+        var stateId = $("#StateId").val();
+
+        if (stateId != "") {
+
+            $.ajax({
+                url: '/Employee/GetCityByState',
+                type: 'GET',
+                data: { stateId: stateId },
+
+                success: function (data) {
+
+                    $("#CityId").html('<option value="">Select City</option>');
+
+                    $.each(data, function (i, item) {
+
+                        $("#CityId").append(
+                           '<option value="' + item.value + '">' + item.text + '</option>'
+                        );
+                    });
+                }
+            });
+        }
+        else {
+            $("#CityId").html('<option value="">Select City</option>');
+        }
+    }
+</script>
